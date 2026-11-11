@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Four in a Row AI — Lab Report</title>
+<style>
+body { font-family: system-ui, sans-serif; line-height: 1.6; color: #1e293b; background: #f8fafc; padding: 40px 20px; }
+main { max-width: 900px; margin: 0 auto; background: #fff; padding: 48px; border-radius: 12px; }
+h1 { border-bottom: 2px solid #3b82f6; padding-bottom: 12px; }
+h2 { color: #1e3a8a; margin-top: 36px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+th, td { padding: 10px 14px; border: 1px solid #e2e8f0; text-align: left; }
+th { background: #f1f5f9; }
+blockquote { background: #eff6ff; border-left: 4px solid #3b82f6; margin: 18px 0; padding: 12px 18px; }
+img { max-width: 100%; border-radius: 8px; }
+code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
+pre { background: #0f172a; color: #e2e8f0; padding: 16px; border-radius: 8px; overflow-x: auto; }
+pre code { background: none; }
+</style>
+</head>
+<body>
+<main>
+<h1>Four in a Row AI — Strategy Coach and Benchmark Report</h1>
+<p><strong>Date:</strong> October 24, 2026  |  <strong>Course:</strong> Artificial Intelligence Lab</p>
+<hr>
+<h2>1. System overview</h2>
+<ul><li><strong>Board</strong>: a 6×7 grid stored as a Python list-of-lists with a move history and an incremental Zobrist hash. A win is checked only along the four lines through the last move.</li><li><strong>Search</strong>: Minimax, Alpha-Beta with centre-first move ordering, iterative deepening with a time limit, and a transposition table.</li><li><strong>MCTS</strong>: Monte Carlo Tree Search with the UCB1 selection rule (c = 1.41).</li><li><strong>GUI</strong>: a Pygame strategy coach with an evaluation bar, hints with a one-line reason, an opening book, per-player clocks, puzzles and a replay slider.</li></ul>
+<h2>2. Study 1 — Ablation</h2>
+<p>Each row adds one feature; all play at depth 3 against Rookie (Alpha-Beta depth 2).</p>
+<table><thead><tr><th>Agent</th><th>Positions searched / move</th><th>Win rate</th><th>Wins / games</th><th>Draw rate</th><th>Match time</th></tr></thead><tbody><tr><td><strong>Minimax-d3</strong></td><td>233</td><td>50%</td><td>10/20</td><td>0%</td><td>4.10s</td></tr><tr><td><strong>AB-d3</strong></td><td>113</td><td>50%</td><td>10/20</td><td>0%</td><td>2.04s</td></tr><tr><td><strong>AB-d3+ord</strong></td><td>85</td><td>45%</td><td>9/20</td><td>0%</td><td>1.60s</td></tr><tr><td><strong>AB-d3+ID</strong></td><td>96</td><td>55%</td><td>11/20</td><td>0%</td><td>1.81s</td></tr><tr><td><strong>AB-d3+TT</strong></td><td>78</td><td>45%</td><td>9/20</td><td>0%</td><td>1.36s</td></tr></tbody></table>
+<blockquote><p><strong>Result</strong>: at the same depth, Alpha-Beta searched 52% fewer positions per move than Minimax.</p></blockquote>
+<figure><img src="../results/ablation.png" alt="Ablation Study"></figure>
+<h2>3. Study 2 — Tournament</h2>
+<p>Every pair of agents plays. Each pair of games starts from a random 4-move opening, played once with each agent moving first.</p>
+<table><thead><tr><th>Match</th><th>Win % (first named)</th><th>Win % (second named)</th><th>Draw %</th><th>Match time</th></tr></thead><tbody><tr><td><strong>Rookie</strong> vs <strong>Tactician</strong></td><td>15%</td><td>85%</td><td>0%</td><td>10.8s</td></tr><tr><td><strong>Rookie</strong> vs <strong>Grandmaster</strong></td><td>20%</td><td>80%</td><td>0%</td><td>107.0s</td></tr><tr><td><strong>Rookie</strong> vs <strong>Gambler</strong></td><td>45%</td><td>50%</td><td>5%</td><td>9.7s</td></tr><tr><td><strong>Tactician</strong> vs <strong>Grandmaster</strong></td><td>15%</td><td>80%</td><td>5%</td><td>119.4s</td></tr><tr><td><strong>Tactician</strong> vs <strong>Gambler</strong></td><td>85%</td><td>15%</td><td>0%</td><td>19.7s</td></tr><tr><td><strong>Grandmaster</strong> vs <strong>Gambler</strong></td><td>70%</td><td>30%</td><td>0%</td><td>112.2s</td></tr></tbody></table>
+<blockquote><p><strong>Ranking by total wins</strong>: Grandmaster (46), Tactician (37), Gambler (19), Rookie (16).</p></blockquote>
+<figure><img src="../results/tournament.png" alt="Tournament Results"></figure>
+<h2>4. Study 3 — Depth vs time</h2>
+<p>Alpha-Beta from one fixed mid-game position at depths 1 to 7.</p>
+<table><thead><tr><th>Depth</th><th>Positions searched</th><th>Time per move</th><th>Growth vs previous depth</th></tr></thead><tbody><tr><td>1</td><td>7</td><td>0.0005s</td><td>-</td></tr><tr><td>2</td><td>27</td><td>0.0017s</td><td>3.86x</td></tr><tr><td>3</td><td>237</td><td>0.0146s</td><td>8.78x</td></tr><tr><td>4</td><td>642</td><td>0.0352s</td><td>2.71x</td></tr><tr><td>5</td><td>4,745</td><td>0.2863s</td><td>7.39x</td></tr><tr><td>6</td><td>11,207</td><td>0.5706s</td><td>2.36x</td></tr><tr><td>7</td><td>77,311</td><td>4.5508s</td><td>6.90x</td></tr></tbody></table>
+<blockquote><p><strong>Result</strong>: each extra level of depth multiplied the work by about 4.7 on average (a full tree would grow by 7 per level).</p></blockquote>
+<figure><img src="../results/depth_vs_time.png" alt="Depth vs Time"></figure>
+<h2>5. Study 4 — Evaluation weights</h2>
+<p>Three weight sets at depth 3 against Tactician (depth 5).</p>
+<table><thead><tr><th>Weight set</th><th>Win rate</th><th>Draw rate</th><th>Match time</th></tr></thead><tbody><tr><td><strong>default</strong></td><td>22%</td><td>5%</td><td>22.2s</td></tr><tr><td><strong>aggressive</strong></td><td>20%</td><td>5%</td><td>22.9s</td></tr><tr><td><strong>defensive</strong></td><td>23%</td><td>3%</td><td>21.2s</td></tr></tbody></table>
+<figure><img src="../results/weight_tuning.png" alt="Weight Tuning"></figure>
+<h2>6. Tests</h2>
+<pre><code>$ python -m pytest -q
+202 passed in 14.22s</code></pre>
+</main>
+</body>
+</html>
