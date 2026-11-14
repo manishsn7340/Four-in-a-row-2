@@ -86,6 +86,13 @@ def test_make_agent():
     assert g.name == "Gambler"
 
 
+def test_app_opponents_use_full_weights():
+    """The app's Alpha-Beta opponents must use the same evaluation as the experiments."""
+    from agents.evaluation import WEIGHTS
+    for label in ("Rookie (AB d=2)", "Tactician (AB d=5)", "Grandmaster (AB d=7)"):
+        assert _make_agent(label).weights == WEIGHTS
+
+
 def test_game_modes():
     assert MODE_HVA == "human_vs_ai"
     assert MODE_HVH == "human_vs_human"

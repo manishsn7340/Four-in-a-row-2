@@ -14,6 +14,7 @@ import pygame
 import gui.theme as T
 from agents.alphabeta import AlphaBetaAgent
 from agents.base import Agent
+from agents.evaluation import WEIGHTS
 from agents.mcts import MCTSAgent
 from agents.simple import RandomAgent
 from game.board import Board
@@ -36,11 +37,12 @@ MENU_MODES = {"hva": MODE_HVA, "hvh": MODE_HVH, "avai": MODE_AVAI}
 def _make_agent(name: str) -> Agent:
     """Build an agent from its menu label."""
     if "Rookie" in name:
-        return AlphaBetaAgent(depth=2, use_tt=True, name="Rookie")
+        return AlphaBetaAgent(depth=2, use_tt=True, weights=WEIGHTS, name="Rookie")
     if "Tactician" in name:
-        return AlphaBetaAgent(depth=5, use_tt=True, name="Tactician")
+        return AlphaBetaAgent(depth=5, use_tt=True, weights=WEIGHTS, name="Tactician")
     if "Grandmaster" in name:
-        return AlphaBetaAgent(depth=7, use_iterative_deepening=True, time_limit=1.5, use_tt=True, name="Grandmaster")
+        return AlphaBetaAgent(depth=7, use_iterative_deepening=True, time_limit=1.5, use_tt=True,
+                              weights=WEIGHTS, name="Grandmaster")
     if "Gambler" in name:
         return MCTSAgent(simulations=1000, name="Gambler")
     return RandomAgent(name="Random", seed=42)

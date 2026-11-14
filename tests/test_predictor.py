@@ -30,9 +30,12 @@ def test_prediction_is_legal_and_restores_board_on_seeded_positions() -> None:
         assert snapshot(board) == before
 
 
-def test_no_prediction_on_full_board_columns_none() -> None:
-    board = play([])
-    assert predict_next_move(board, 1) is not None
+def test_no_prediction_on_a_full_board() -> None:
+    # A drawn, completely full board: no column is left to predict.
+    board = play([0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 2, 3, 2, 3, 2, 3, 3, 2, 3, 2, 3, 2,
+                  4, 5, 4, 5, 4, 5, 5, 4, 5, 4, 5, 4, 6, 6, 6, 6, 6, 6])
+    assert board.is_full() and board.winner() == 0
+    assert predict_next_move(board, 1) is None
 
 
 def test_style_needs_a_few_moves() -> None:

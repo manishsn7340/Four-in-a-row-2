@@ -7,7 +7,7 @@ import math
 import pygame
 
 import gui.theme as T
-from agents.evaluation import evaluate
+from agents.evaluation import WEIGHTS, evaluate
 from agents.predictor import describe_style, predict_next_move
 from game.board import Board
 from gui.banner import wrap_text
@@ -31,7 +31,7 @@ def _norm_eval(board: Board) -> float:
         return 1.0 if winner == 1 else -1.0
     if board.is_full():
         return 0.0
-    return math.tanh(evaluate(board, 1) / 150.0)
+    return math.tanh(evaluate(board, 1, WEIGHTS) / 150.0)
 
 
 def eval_sentence(value: float, name1: str, name2: str) -> str:
